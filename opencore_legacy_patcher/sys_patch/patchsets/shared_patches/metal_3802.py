@@ -503,6 +503,32 @@ class LegacyMetal3802(BaseSharedPatchSet):
         }
 
 
+    def _patches_metal_3802_tahoe_frameworks(self) -> dict:
+        """
+        Tahoe-specific framework and sandbox patches for Metal 3802 GPUs.
+        """
+        if self._xnu_major < os_data.tahoe.value:
+            return {}
+
+        return {
+            "Metal 3802 Tahoe Frameworks": {
+                PatchType.OVERWRITE_SYSTEM_VOLUME: {
+                    "/System/Library/Sandbox/Profiles": {
+                        "nsattributedstringagent.sb": "26.0-25G229",
+                    },
+                },
+                PatchType.MERGE_SYSTEM_VOLUME: {
+                    "/System/Library/Frameworks": {
+                        "ImageIO.framework": "26.0-25G229",
+                    },
+                    "/System/Library/PrivateFrameworks": {
+                        "CMPhoto.framework": "26.0-25G229",
+                    },
+                },
+            },
+        }
+
+
     def patches(self) -> dict:
         """
         Dictionary of patches
@@ -512,4 +538,5 @@ class LegacyMetal3802(BaseSharedPatchSet):
             **self._patches_metal_3802_common_extended(),
             **self._patches_metal_3802_metallibs(),
             **self._patches_metal_3802_metallibs_tahoe(),
+            **self._patches_metal_3802_tahoe_frameworks(),
         }

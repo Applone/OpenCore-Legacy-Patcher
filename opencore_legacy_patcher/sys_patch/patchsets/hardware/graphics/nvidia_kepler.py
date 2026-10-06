@@ -96,11 +96,6 @@ class NvidiaKepler(BaseHardware):
         return {
             "Nvidia Kepler": {
                 PatchType.OVERWRITE_SYSTEM_VOLUME: {
-                    **({
-                        "/System/Library/Sandbox/Profiles": {
-                            "nsattributedstringagent.sb": "26.0-25G229",
-                        },
-                    } if self._xnu_major >= os_data.tahoe else {}),
                     "/System/Library/Extensions": {
                         "GeForce.kext":            self._resolve_kepler_geforce_framebuffers(),
                         "NVDAGF100Hal.kext":       "12.0 Beta 6",
@@ -115,12 +110,10 @@ class NvidiaKepler(BaseHardware):
                 },
                 PatchType.MERGE_SYSTEM_VOLUME: {
                     "/System/Library/Frameworks": {
-                        **({ "ImageIO.framework": "26.0-25G229" } if self._xnu_major >= os_data.tahoe else {}),
                         # XNU 21.6 (macOS 12.5)
                         **({ "Metal.framework": "12.5 Beta 2"} if (self._xnu_float >= self.macOS_12_5 and self._xnu_major < os_data.ventura) else {}),
                     },
                     "/System/Library/PrivateFrameworks": {
-                        **({ "CMPhoto.framework": "26.0-25G229" } if self._xnu_major >= os_data.tahoe else {}),
                         "GPUCompiler.framework": "13.2.1-25" if self._xnu_major >= os_data.tahoe else "11.6",
                     },
                 }
